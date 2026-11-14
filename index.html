@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Finish — Lucypatina, a painter's finish companion</title>
+<style>
+  :root {
+    --bg: #141210;
+    --panel: #1e1a17;
+    --panel2: #262019;
+    --line: #3a322a;
+    --gold: #d8a94e;
+    --gold-bright: #e8c878;
+    --cream: #f2ead8;
+    --muted: #b8a98d;
+    --red: #d96a4e;
+    --green: #8fb573;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.55;
+    padding: 0 0 60px;
+  }
+  header {
+    text-align: center;
+    padding: 44px 20px 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 {
+    font-size: 44px;
+    letter-spacing: 6px;
+    color: var(--gold-bright);
+    font-weight: normal;
+  }
+  header p { color: var(--muted); font-size: 17px; margin-top: 6px; font-style: italic; }
+  main { max-width: 720px; margin: 0 auto; padding: 0 18px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 22px 26px;
+    margin-top: 22px;
+  }
+  .card h2 { font-size: 22px; color: var(--gold); font-weight: normal; letter-spacing: 1px; margin-bottom: 4px; }
+  .card .sub { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+  label { display: block; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+  select, input[type="number"], input[type="text"], input[type="datetime-local"] {
+    width: 100%;
+    background: var(--panel2);
+    color: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 11px 12px;
+    font-size: 16px;
+    font-family: Georgia, serif;
+  }
+  select:focus, input:focus { outline: 1px solid var(--gold); }
+  .row { display: flex; gap: 14px; }
+  .row > div { flex: 1; min-width: 0; }
+  @media (max-width: 520px) {
+    .row { flex-direction: column; }
+    .row > div { flex: none; }
+  }
+  button {
+    width: 100%;
+    background: var(--gold);
+    color: #1a1408;
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 17px;
+    font-family: Georgia, serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  button:hover { background: var(--gold-bright); }
+  button.ghost {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 9px;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  #result { display: none; }
+  #result.show { display: block; }
+  .call {
+    font-size: 20px;
+    line-height: 1.5;
+    border-left: 3px solid var(--gold);
+    padding-left: 14px;
+    margin: 14px 0;
+  }
+  .sched { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  .sched td { padding: 9px 4px; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .sched td:first-child { color: var(--muted); width: 46%; }
+  .sched td:last-child { text-align: right; color: var(--gold-bright); font-weight: bold; }
+  .warn {
+    background: #2a1712;
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-size: 16px;
+  }
+  .warn b { color: var(--red); }
+  .note { font-style: italic; color: var(--muted); margin-top: 14px; font-size: 16px; }
+  .job {
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .job .name { font-size: 18px; color: var(--gold-bright); }
+  .job .meta { color: var(--muted); font-size: 14px; margin: 2px 0 8px; }
+  .job .status { font-size: 16px; }
+  .job .status.ok { color: var(--green); }
+  .job .status.wait { color: var(--gold); }
+  .job button { width: auto; padding: 6px 14px; font-size: 13px; margin-top: 10px; background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .privacy {
+    margin-top: 22px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 18px 22px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .privacy b { color: var(--gold); }
+  .empty { color: var(--muted); font-style: italic; margin-top: 10px; }
+  footer { text-align: center; color: var(--muted); font-size: 14px; margin-top: 34px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>THE FINISH</h1>
+  <p>Lucypatina — a painter's finish companion. Honest, plain, and it never leaves your device.</p>
+</header>
+<main>
+
+  <section class="card" id="call-card">
+    <h2>The Finish Call</h2>
+    <p class="sub">Tell it the job. It tells you the truth about the finish.</p>
+
+    <label for="surface">Surface</label>
+    <select id="surface">
+      <option value="drywall-new">New drywall</option>
+      <option value="drywall-painted">Painted drywall, good condition</option>
+      <option value="wood-bare">Bare wood</option>
+      <option value="wood-painted">Painted wood, good condition</option>
+      <option value="metal-bare">Bare metal</option>
+      <option value="metal-painted">Painted metal, good condition</option>
+      <option value="masonry">Masonry / concrete / block</option>
+      <option value="peeling">Peeling or chalking paint</option>
+    </select>
+
+    <label for="paint">Paint</label>
+    <select id="paint">
+      <option value="latex">Latex / acrylic</option>
+      <option value="oil">Oil / alkyd</option>
+      <option value="epoxy">Epoxy</option>
+      <option value="lacquer">Lacquer</option>
+      <option value="stain">Stain (penetrating)</option>
+    </select>
+
+    <div class="row">
+      <div>
+        <label for="temp">Temperature (&deg;F)</label>
+        <input type="number" id="temp" value="70" min="20" max="110">
+      </div>
+      <div>
+        <label for="humidity">Humidity (%)</label>
+        <input type="number" id="humidity" value="50" min="5" max="100">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="coats">Coats planned</label>
+        <select id="coats">
+          <option value="1">1 coat</option>
+          <option value="2" selected>2 coats</option>
+          <option value="3">3 coats</option>
+        </select>
+      </div>
+      <div>
+        <label for="where">Where</label>
+        <select id="where">
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="calcBtn" type="button">Get the call</button>
+
+    <div id="result">
+      <div class="call" id="callText"></div>
+      <table class="sched">
+        <tr><td>Dry to touch</td><td id="rTouch"></td></tr>
+        <tr><td>Safe to recoat</td><td id="rRecoat"></td></tr>
+        <tr><td>Fully cured</td><td id="rCure"></td></tr>
+      </table>
+      <div id="warnings"></div>
+      <p class="note" id="plainNote"></p>
+    </div>
+  </section>
+
+  <section class="card" id="tracker-card">
+    <h2>Cure Tracker</h2>
+    <p class="sub">Log a coat. It watches the clock so you don't have to guess.</p>
+
+    <label for="jobName">Job / room</label>
+    <input type="text" id="jobName" placeholder="e.g. Kitchen cabinets, coat 1">
+
+    <div class="row">
+      <div>
+        <label for="jobPaint">Paint</label>
+        <select id="jobPaint">
+          <option value="latex">Latex / acrylic</option>
+          <option value="oil">Oil / alkyd</option>
+          <option value="epoxy">Epoxy</option>
+          <option value="lacquer">Lacquer</option>
+          <option value="stain">Stain (penetrating)</option>
+        </select>
+      </div>
+      <div>
+        <label for="jobTime">Coat applied at</label>
+        <input type="datetime-local" id="jobTime">
+      </div>
+    </div>
+
+    <button id="logBtn" type="button">Log this coat</button>
+    <div id="jobs"></div>
+  </section>
+
+  <section class="privacy">
+    <b>Private by design.</b> There is no account, no cloud, and no tracking.
+    Your jobs live in this device's storage and nowhere else. Nothing you type
+    here is sent anywhere, because there is nowhere to send it to.
+  </section>
+
+</main>
+<footer>Lucypatina &middot; The Finish — built under International AIDAY623 LLC, formed by a painter. The finish is never finished &mdash; it is always curing.</footer>
+
+<script>
+// --- The Finish engine: real cure math, painter's rules ---
+// Base times in hours at 70F / 50% relative humidity.
+const PAINTS = {
+  latex:   { name: 'Latex / acrylic', touch: 1,   recoat: 4,  cure: 336, minTemp: 50 },
+  oil:     { name: 'Oil / alkyd',     touch: 8,   recoat: 24, cure: 168, minTemp: 40 },
+  epoxy:   { name: 'Epoxy',           touch: 6,   recoat: 16, cure: 168, minTemp: 50 },
+  lacquer: { name: 'Lacquer',         touch: 0.5, recoat: 1,  cure: 24,  minTemp: 55 },
+  stain:   { name: 'Stain',           touch: 2,   recoat: 6,  cure: 72,  minTemp: 50 }
+};
+
+const PRIMERS = {
+  'drywall-new': 'PVA drywall primer first. New drywall drinks paint. Seal it or the finish comes out patchy.',
+  'drywall-painted': 'No primer needed. Scuff sand, wipe the dust, and go.',
+  'wood-bare': 'Prime first. Oil-based or shellac on the knots, or they bleed through by spring.',
+  'wood-painted': 'No primer needed if it is sound. Scuff sand and clean.',
+  'metal-bare': 'Rust-inhibitive primer first. Bare metal rusts under paint if you skip it.',
+  'metal-painted': 'No primer needed if it is sound. Scuff sand and clean.',
+  'masonry': 'Masonry / bonding primer first. Block and concrete are thirsty and alkaline.',
+  'peeling': 'Scrape it, sand it, spot prime the bare spots. Paint over peeling paint and you are painting a failure.'
+};
+
+function factors(temp, rh) {
+  let tf = Math.pow(1.8, (70 - temp) / 10); // colder = slower
+  tf = Math.min(4, Math.max(0.7, tf));
+  let hf = 1 + Math.max(0, rh - 50) / 50 * 0.8 - Math.max(0, 50 - rh) / 50 * 0.15;
+  hf = Math.min(2, Math.max(0.85, hf));
+  return tf * hf;
+}
+
+function fmtHours(h) {
+  if (h < 1) return Math.round(h * 60) + ' min';
+  if (h < 24) {
+    const v = Math.round(h * 2) / 2;
+    return v + (v === 1 ? ' hr' : ' hrs');
+  }
+  const d = Math.round(h / 24 * 2) / 2;
+  return d + (d === 1 ? ' day' : ' days');
+}
+
+function fmtClock(d) {
+  return d.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function warningsFor(paintKey, temp, rh, where) {
+  const p = PAINTS[paintKey];
+  const w = [];
+  if (temp < p.minTemp) {
+    if (paintKey === 'latex') w.push('<b>Stop.</b> Latex does not form a film below 50&deg;. It will look dry and peel by spring. Wait for a warmer day, or switch to oil.');
+    else w.push('<b>Too cold for this paint.</b> ' + p.name + ' needs at least ' + p.minTemp + '&deg;F to cure right. Below that it stays tacky for days.');
+  }
+  if (rh > 80) w.push('<b>The air is full.</b> Over 80% humidity, dry times stretch and the finish can blush or stay tacky. Give it twice the time on the schedule.');
+  if (temp > 90) w.push('<b>It will flash dry.</b> Over 90&deg; the paint skins before it can level. You will see every lap. Paint early morning or late evening.');
+  if (rh < 25) w.push('<b>Dry air pulls the water out fast.</b> Keep a wet edge or you will see every lap.');
+  if (where === 'outdoor' && temp < 50) w.push('<b>Outdoor and under 50&deg;.</b> The sun will lie to you. It feels warm in the light and the paint still will not cure in the shade.');
+  return w;
+}
+
+function getCall() {
+  const surface = document.getElementById('surface').value;
+  const paintKey = document.getElementById('paint').value;
+  const temp = parseFloat(document.getElementById('temp').value) || 70;
+  const rh = parseFloat(document.getElementById('humidity').value) || 50;
+  const coats = parseInt(document.getElementById('coats').value, 10);
+  const where = document.getElementById('where').value;
+  const p = PAINTS[paintKey];
+  const f = factors(temp, rh);
+
+  const touch = p.touch * f;
+  const recoat = p.recoat * f;
+  const cure = p.cure * f;
+
+  const primer = PRIMERS[surface];
+  const coatWord = coats === 1 ? 'One coat' : coats + ' coats';
+  document.getElementById('callText').innerHTML =
+    coatWord + ' of ' + p.name + ' &mdash; ' + primer;
+  document.getElementById('rTouch').textContent = fmtHours(touch);
+  document.getElementById('rRecoat').textContent = fmtHours(recoat);
+  document.getElementById('rCure').textContent = fmtHours(cure);
+
+  const warns = warningsFor(paintKey, temp, rh, where);
+  document.getElementById('warnings').innerHTML =
+    warns.map(function (x) { return '<div class="warn">' + x + '</div>'; }).join('');
+
+  document.getElementById('plainNote').textContent =
+    warns.length
+      ? 'The conditions are fighting you. Read the warnings before you open the can.'
+      : 'Conditions are right. Honest coverage, let it cure, and do not rush the last coat. The finish is never finished — it is always curing.';
+
+  document.getElementById('result').classList.add('show');
+}
+
+// --- Cure tracker: local only ---
+const STORE_KEY = 'finish-jobs-v1';
+
+function loadJobs() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveJobs(jobs) { localStorage.setItem(STORE_KEY, JSON.stringify(jobs)); }
+
+function relTime(ms) {
+  if (ms <= 0) return 'now';
+  const mins = Math.round(ms / 60000);
+  if (mins < 60) return 'in ' + mins + ' min';
+  const hrs = Math.round(mins / 60 * 2) / 2;
+  if (hrs < 24) return 'in ' + hrs + ' hrs';
+  const days = Math.round(hrs / 24 * 2) / 2;
+  return 'in ' + days + ' days';
+}
+
+function renderJobs() {
+  const jobs = loadJobs();
+  const box = document.getElementById('jobs');
+  if (!jobs.length) { box.innerHTML = '<p class="empty">No coats logged yet.</p>'; return; }
+  const now = Date.now();
+  box.innerHTML = jobs.map(function (j, i) {
+    const p = PAINTS[j.paint];
+    const touchAt = j.start + p.touch * j.factor * 3600000;
+    const recoatAt = j.start + p.recoat * j.factor * 3600000;
+    const cureAt = j.start + p.cure * j.factor * 3600000;
+    let status, cls;
+    if (now < touchAt) { status = 'Drying — dry to touch ' + relTime(touchAt - now) + '.'; cls = 'wait'; }
+    else if (now < recoatAt) { status = 'Dry to touch — safe to recoat ' + relTime(recoatAt - now) + '.'; cls = 'wait'; }
+    else if (now < cureAt) { status = 'Recoat window open — fully cured ' + relTime(cureAt - now) + '.'; cls = 'wait'; }
+    else { status = 'Fully cured.'; cls = 'ok'; }
+    return '<div class="job">' +
+      '<div class="name">' + escapeHtml(j.name) + '</div>' +
+      '<div class="meta">' + p.name + ' &middot; applied ' + fmtClock(new Date(j.start)) +
+      ' &middot; recoat ' + fmtClock(new Date(recoatAt)) + ' &middot; cured ' + fmtClock(new Date(cureAt)) + '</div>' +
+      '<div class="status ' + cls + '">' + status + '</div>' +
+      '<button type="button" data-del="' + i + '">Remove</button></div>';
+  }).join('');
+  box.querySelectorAll('[data-del]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const jobs = loadJobs();
+      jobs.splice(parseInt(b.getAttribute('data-del'), 10), 1);
+      saveJobs(jobs); renderJobs();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+document.getElementById('calcBtn').addEventListener('click', getCall);
+
+document.getElementById('logBtn').addEventListener('click', function () {
+  const name = document.getElementById('jobName').value.trim() || 'Untitled coat';
+  const paintKey = document.getElementById('jobPaint').value;
+  const timeVal = document.getElementById('jobTime').value;
+  const start = timeVal ? new Date(timeVal).getTime() : Date.now();
+  const temp = parseFloat(document.getElementById('temp').value) || 70;
+  const rh = parseFloat(document.getElementById('humidity').value) || 50;
+  const jobs = loadJobs();
+  jobs.unshift({ name: name, paint: paintKey, start: start, factor: factors(temp, rh) });
+  saveJobs(jobs);
+  document.getElementById('jobName').value = '';
+  renderJobs();
+});
+
+// Default the coat time to right now.
+(function () {
+  const el = document.getElementById('jobTime');
+  const d = new Date();
+  const pad = function (n) { return String(n).padStart(2, '0'); };
+  el.value = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+})();
+
+renderJobs();
+setInterval(renderJobs, 60000);
+</script>
+</body>
+</html>
